@@ -1,26 +1,38 @@
-# Business Intelligence Dashboard - Competitor Stock Tracking
+# Business Intelligence Dashboard - Multi-Industry Competitor Stock Tracking
 
-A professional business intelligence dashboard that provides real-time stock performance tracking for major technology companies. Designed for deployment on Vercel with serverless architecture.
+A professional business intelligence dashboard that provides real-time stock performance tracking across multiple industries. Designed for deployment on Vercel with serverless architecture.
 
 ## 🎯 Overview
 
-This dashboard helps business professionals quickly assess competitive positioning by comparing stock performance across major technology companies. Built with vanilla JavaScript for optimal performance and ease of deployment.
+This dashboard helps business professionals quickly assess competitive positioning by comparing stock performance across multiple industries. Track technology leaders and pharmaceutical giants side-by-side for comprehensive market intelligence. Built with vanilla JavaScript for optimal performance and ease of deployment.
 
 ## 🏢 Tracked Companies
 
+### Technology Sector
 - **Apple Inc.** (AAPL)
 - **Microsoft Corporation** (MSFT)
 - **Alphabet Inc. / Google** (GOOGL)
 - **Meta Platforms Inc.** (META)
 - **Amazon.com Inc.** (AMZN)
 
+### Pharmaceutical Sector
+- **Pfizer Inc.** (PFE)
+- **Johnson & Johnson** (JNJ)
+- **Novartis AG** (NVS)
+- **Bristol Myers Squibb Co.** (BMY)
+- **Merck & Co. Inc.** (MRK)
+
+*Note: Daiichi Sankyo is available as DSNKY (OTC) and can be easily swapped in.*
+
 ## ✨ Features
 
 ### Dashboard Features
-- **Real-time Stock Data**: Live stock prices from API Ninjas
-- **Visual Highlighting**: Highest prices in green, lowest in red
+- **Multi-Industry Tracking**: Monitor Technology and Pharmaceutical sectors simultaneously
+- **Real-time Stock Data**: Live stock prices from API Ninjas for 10+ companies
+- **Industry Segmentation**: Data organized in separate, clearly labeled sections
+- **Visual Highlighting**: Highest prices in green, lowest in red (per industry)
 - **Responsive Design**: Works seamlessly on mobile and desktop
-- **Data Export**: Download data as CSV for reports and presentations
+- **Data Export**: Download comprehensive CSV with all industries for reports
 - **Auto-refresh**: Manual refresh with loading indicators
 - **Accessibility**: WCAG AA compliant with keyboard shortcuts
 - **Professional UI**: High-contrast design suitable for business presentations
@@ -98,16 +110,39 @@ Set the following environment variable in Vercel:
 
 - `API_KEY`: Your API Ninjas API key
 
-### Modifying Tracked Companies
-To track different companies, edit the `COMPANIES` array in `api/stocks.js`:
+### Adding or Modifying Industries and Companies
+To track different industries or companies, edit the `INDUSTRIES` object in `api/stocks.js`:
 
 ```javascript
-const COMPANIES = [
-  { ticker: 'AAPL', name: 'Apple Inc.' },
-  { ticker: 'MSFT', name: 'Microsoft Corporation' },
-  // Add or modify companies here
-];
+const INDUSTRIES = {
+  technology: {
+    name: 'Technology Sector',
+    companies: [
+      { ticker: 'AAPL', name: 'Apple Inc.' },
+      { ticker: 'MSFT', name: 'Microsoft Corporation' },
+      // Add or modify companies here
+    ]
+  },
+  pharmaceutical: {
+    name: 'Pharmaceutical Sector',
+    companies: [
+      { ticker: 'PFE', name: 'Pfizer Inc.' },
+      // Add more companies here
+    ]
+  },
+  // Add new industries here:
+  automotive: {
+    name: 'Automotive Sector',
+    companies: [
+      { ticker: 'TSLA', name: 'Tesla Inc.' },
+      { ticker: 'F', name: 'Ford Motor Company' },
+      { ticker: 'GM', name: 'General Motors Co.' }
+    ]
+  }
+};
 ```
+
+The dashboard will automatically display all industries in separate sections!
 
 ## 🎨 Customization
 
@@ -216,12 +251,20 @@ For issues or questions:
 ## 🎓 Academic Context
 
 This project was created as part of a Management Information Systems (MGIS) business intelligence course to demonstrate:
-- Real-time data integration
-- Professional dashboard design
-- Serverless architecture
-- Business intelligence reporting
+- Real-time data integration across multiple industries
+- Professional dashboard design with industry segmentation
+- Serverless architecture and scalability
+- Business intelligence reporting and competitive analysis
 - Data visualization best practices
+- Multi-sector comparative analysis capabilities
+
+### Educational Value
+This dashboard showcases:
+- **Cross-Industry Analysis**: Compare different market sectors side-by-side
+- **Scalable Architecture**: Easily add new industries and companies
+- **Professional Presentation**: Business-ready output suitable for executive briefings
+- **Data Export**: CSV generation for further analysis in Excel or BI tools
 
 ---
 
-**Built with ❤️ for Business Intelligence**
+**Built with ❤️ for Business Intelligence | Multi-Industry Competitive Analysis**

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Real-time competitive intelligence dashboard tracking stock performance of major technology companies">
-    <meta name="keywords" content="business intelligence, stock tracking, competitive analysis, technology sector">
+    <meta name="description" content="Real-time competitive intelligence dashboard tracking stock performance across Technology and Pharmaceutical sectors">
+    <meta name="keywords" content="business intelligence, stock tracking, competitive analysis, technology sector, pharmaceutical sector">
     <meta property="og:title" content="Competitive Intelligence Dashboard">
-    <meta property="og:description" content="Technology Sector Stock Analysis - Real-time tracking of AAPL, MSFT, GOOGL, META, AMZN">
+    <meta property="og:description" content="Multi-Industry Stock Analysis - Real-time tracking of Technology and Pharmaceutical sectors">
     <meta property="og:type" content="website">
-    <title>Competitive Intelligence Dashboard | Technology Sector Analysis</title>
+    <title>Competitive Intelligence Dashboard | Multi-Industry Analysis</title>
 
     <style>
         /* ===== CSS RESET & BASE STYLES ===== */
@@ -136,6 +136,24 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             overflow-x: auto;
+        }
+
+        /* ===== INDUSTRY SECTION ===== */
+        .industry-section {
+            margin-bottom: 40px;
+        }
+
+        .industry-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .industry-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #ffffff;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
         }
 
         /* ===== DATA TABLE ===== */
@@ -339,7 +357,7 @@
         <!-- Header Section -->
         <header>
             <h1>Competitive Intelligence Dashboard</h1>
-            <p class="subtitle">Technology Sector Stock Analysis</p>
+            <p class="subtitle">Multi-Industry Stock Analysis | Technology & Pharmaceutical Sectors</p>
         </header>
 
         <!-- Control Panel -->
@@ -371,7 +389,7 @@
 
     <script>
         // ===== GLOBAL STATE =====
-        let stockData = [];
+        let stockData = {};  // Now stores data organized by industry
         let lastUpdateTime = null;
 
         // ===== MAIN DATA FETCHING FUNCTION =====
@@ -388,7 +406,7 @@
             dataDisplay.innerHTML = `
                 <div class="loading">
                     <div class="loading-spinner"></div>
-                    <p class="loading-text">Fetching latest data...</p>
+                    <p class="loading-text">Fetching latest data across multiple industries...</p>
                 </div>
             `;
 
@@ -406,16 +424,16 @@
 
                 const result = await response.json();
 
-                if (!result.success || !result.data) {
+                if (!result.success || !result.industries) {
                     throw new Error('Invalid data format received from API');
                 }
 
                 // Store data and update timestamp
-                stockData = result.data.filter(stock => stock.success);
+                stockData = result.industries;
                 lastUpdateTime = new Date(result.timestamp);
 
                 // Render the data
-                renderStockTable(stockData);
+                renderMultiIndustryDashboard(stockData);
                 updateTimestamp();
 
                 // Re-enable buttons
@@ -443,13 +461,13 @@
             }
         }
 
-        // ===== TABLE RENDERING =====
+        // ===== MULTI-INDUSTRY DASHBOARD RENDERING =====
         /**
-         * Renders stock data in a formatted table with highlighting
-         * @param {Array} data - Array of stock objects
+         * Renders complete dashboard with all industries
+         * @param {Object} industries - Object containing all industry data
          */
-        function renderStockTable(data) {
-            if (!data || data.length === 0) {
+        function renderMultiIndustryDashboard(industries) {
+            if (!industries || Object.keys(industries).length === 0) {
                 document.getElementById('dataDisplay').innerHTML = `
                     <div class="error">
                         <div class="error-icon">📊</div>
@@ -460,45 +478,56 @@
                 return;
             }
 
-            // Find highest and lowest prices for highlighting
-            const prices = data.map(stock => stock.price);
-            const highestPrice = Math.max(...prices);
-            const lowestPrice = Math.min(...prices);
+            let dashboardHTML = '';
 
-            // Build table HTML
-            const tableHTML = `
-                <table role="table" aria-label="Stock prices table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Company</th>
-                            <th scope="col">Ticker</th>
-                            <th scope="col">Current Price</th>
-                            <th scope="col">Change Indicator</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${data.map(stock => {
-                            const isHighest = stock.price === highestPrice;
-                            const isLowest = stock.price === lowestPrice;
-                            const priceClass = isHighest ? 'price-highest' : isLowest ? 'price-lowest' : '';
+            // Render each industry section
+            for (const [industryKey, industryData] of Object.entries(industries)) {
+                const data = industryData.data.filter(stock => stock.success);
 
-                            // Generate change indicator (simulated for demonstration)
-                            const changeIndicator = generateChangeIndicator(isHighest, isLowest);
+                if (data.length === 0) continue;
 
-                            return `
+                // Find highest and lowest prices within this industry
+                const prices = data.map(stock => stock.price);
+                const highestPrice = Math.max(...prices);
+                const lowestPrice = Math.min(...prices);
+
+                dashboardHTML += `
+                    <div class="industry-section">
+                        <h2 class="industry-title">${industryData.name}</h2>
+                        <table role="table" aria-label="${industryData.name} stock prices table">
+                            <thead>
                                 <tr>
-                                    <td>${stock.name}</td>
-                                    <td><span class="ticker-badge">${stock.ticker}</span></td>
-                                    <td class="${priceClass}">$${stock.price.toFixed(2)}</td>
-                                    <td>${changeIndicator}</td>
+                                    <th scope="col">Company</th>
+                                    <th scope="col">Ticker</th>
+                                    <th scope="col">Current Price</th>
+                                    <th scope="col">Change Indicator</th>
                                 </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-            `;
+                            </thead>
+                            <tbody>
+                                ${data.map(stock => {
+                                    const isHighest = stock.price === highestPrice;
+                                    const isLowest = stock.price === lowestPrice;
+                                    const priceClass = isHighest ? 'price-highest' : isLowest ? 'price-lowest' : '';
 
-            document.getElementById('dataDisplay').innerHTML = tableHTML;
+                                    // Generate change indicator
+                                    const changeIndicator = generateChangeIndicator(isHighest, isLowest);
+
+                                    return `
+                                        <tr>
+                                            <td>${stock.name}</td>
+                                            <td><span class="ticker-badge">${stock.ticker}</span></td>
+                                            <td class="${priceClass}">$${stock.price.toFixed(2)}</td>
+                                            <td>${changeIndicator}</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            document.getElementById('dataDisplay').innerHTML = dashboardHTML;
         }
 
         // ===== CHANGE INDICATOR GENERATOR =====
@@ -541,26 +570,45 @@
         // ===== CSV EXPORT FUNCTION =====
         /**
          * Exports current stock data to CSV format and triggers download
+         * Includes all industries with section headers
          */
         function exportToCSV() {
-            if (!stockData || stockData.length === 0) {
+            if (!stockData || Object.keys(stockData).length === 0) {
                 alert('No data available to export. Please refresh the data first.');
                 return;
             }
 
-            // Build CSV content
-            const headers = ['Company', 'Ticker', 'Current Price', 'Timestamp'];
-            const csvRows = [headers.join(',')];
+            // Build CSV content with industry sections
+            const csvRows = [];
 
-            stockData.forEach(stock => {
-                const row = [
-                    `"${stock.name}"`,
-                    stock.ticker,
-                    stock.price.toFixed(2),
-                    `"${new Date(stock.timestamp).toLocaleString()}"`
-                ];
-                csvRows.push(row.join(','));
-            });
+            // Add main header
+            csvRows.push('Competitive Intelligence Dashboard - Multi-Industry Stock Analysis');
+            csvRows.push(`Generated: ${new Date().toLocaleString()}`);
+            csvRows.push(''); // Empty line
+
+            // Process each industry
+            for (const [industryKey, industryData] of Object.entries(stockData)) {
+                const data = industryData.data.filter(stock => stock.success);
+
+                if (data.length === 0) continue;
+
+                // Add industry header
+                csvRows.push(industryData.name);
+                csvRows.push('Company,Ticker,Current Price,Timestamp');
+
+                // Add stock data
+                data.forEach(stock => {
+                    const row = [
+                        `"${stock.name}"`,
+                        stock.ticker,
+                        stock.price.toFixed(2),
+                        `"${new Date(stock.timestamp).toLocaleString()}"`
+                    ];
+                    csvRows.push(row.join(','));
+                });
+
+                csvRows.push(''); // Empty line between industries
+            }
 
             const csvContent = csvRows.join('\n');
 
@@ -570,7 +618,7 @@
             const url = URL.createObjectURL(blob);
 
             link.setAttribute('href', url);
-            link.setAttribute('download', `competitive-intelligence-${Date.now()}.csv`);
+            link.setAttribute('download', `competitive-intelligence-multi-industry-${Date.now()}.csv`);
             link.style.visibility = 'hidden';
 
             document.body.appendChild(link);
