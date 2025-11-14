@@ -69,6 +69,51 @@
             font-weight: 400;
         }
 
+        /* ===== TAB NAVIGATION ===== */
+        .tab-navigation {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0;
+        }
+
+        .tab-button {
+            background: transparent;
+            color: #a0aec0;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: none;
+        }
+
+        .tab-button:hover {
+            color: #ffffff;
+            background: rgba(102, 126, 234, 0.1);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tab-button.active {
+            color: #ffffff;
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in;
+        }
+
         /* ===== CONTROL PANEL ===== */
         .controls {
             display: flex;
@@ -350,6 +395,160 @@
             outline: 3px solid #667eea;
             outline-offset: 2px;
         }
+
+        /* ===== EARNINGS TRANSCRIPT STYLES ===== */
+        .company-selector {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .company-selector label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .company-selector select {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            min-width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .company-selector select:hover {
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .company-selector select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .company-selector select option {
+            background: #1a1a2e;
+            color: #ffffff;
+        }
+
+        .transcript-container {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .transcript-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .transcript-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .meta-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .meta-label {
+            font-size: 0.85rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .meta-value {
+            font-size: 1.1rem;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .transcript-text {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            line-height: 1.8;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 0.95rem;
+        }
+
+        .speaker-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .speaker-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .speaker-name {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.05rem;
+        }
+
+        .speaker-role {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .speaker-text {
+            color: #e2e8f0;
+            line-height: 1.7;
+            margin-top: 10px;
+        }
+
+        .participants-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .participant-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .participant-name {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .participant-role {
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
     </style>
 </head>
 <body>
@@ -360,28 +559,75 @@
             <p class="subtitle">Multi-Industry Stock Analysis | Technology & Pharmaceutical Sectors</p>
         </header>
 
-        <!-- Control Panel -->
-        <div class="controls">
-            <button id="refreshBtn" onclick="fetchStockData()" aria-label="Refresh stock data">
-                🔄 Refresh Data
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="switchTab('stocks')" id="stocksTab">
+                📈 Stock Prices
             </button>
-            <button id="exportBtn" class="export-btn" onclick="exportToCSV()" aria-label="Export data to CSV">
-                📊 Export to CSV
+            <button class="tab-button" onclick="switchTab('earnings')" id="earningsTab">
+                📄 Earnings Transcripts
             </button>
         </div>
 
-        <!-- Timestamp Display -->
-        <div class="timestamp" id="timestamp" role="status" aria-live="polite">
-            Last updated: Not yet loaded
+        <!-- Stock Prices Tab Content -->
+        <div id="stocksContent" class="tab-content active">
+            <!-- Control Panel -->
+            <div class="controls">
+                <button id="refreshBtn" onclick="fetchStockData()" aria-label="Refresh stock data">
+                    🔄 Refresh Data
+                </button>
+                <button id="exportBtn" class="export-btn" onclick="exportToCSV()" aria-label="Export data to CSV">
+                    📊 Export to CSV
+                </button>
+            </div>
+
+            <!-- Timestamp Display -->
+            <div class="timestamp" id="timestamp" role="status" aria-live="polite">
+                Last updated: Not yet loaded
+            </div>
+
+            <!-- Data Display Container -->
+            <div class="table-container">
+                <div id="dataDisplay">
+                    <!-- Initial loading state -->
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-text">Fetching latest data...</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Data Display Container -->
-        <div class="table-container">
-            <div id="dataDisplay">
-                <!-- Initial loading state -->
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    <p class="loading-text">Fetching latest data...</p>
+        <!-- Earnings Transcripts Tab Content -->
+        <div id="earningsContent" class="tab-content">
+            <!-- Company Selector -->
+            <div class="company-selector">
+                <label for="companySelect">Select Company for Earnings Transcript:</label>
+                <select id="companySelect" onchange="fetchEarningsTranscript()">
+                    <option value="">-- Choose a Company --</option>
+                    <optgroup label="Technology Sector">
+                        <option value="AAPL">Apple Inc. (AAPL)</option>
+                        <option value="MSFT">Microsoft Corporation (MSFT)</option>
+                        <option value="GOOGL">Alphabet Inc. (GOOGL)</option>
+                        <option value="META">Meta Platforms Inc. (META)</option>
+                        <option value="AMZN">Amazon.com Inc. (AMZN)</option>
+                    </optgroup>
+                    <optgroup label="Pharmaceutical Sector">
+                        <option value="PFE">Pfizer Inc. (PFE)</option>
+                        <option value="JNJ">Johnson & Johnson (JNJ)</option>
+                        <option value="NVS">Novartis AG (NVS)</option>
+                        <option value="BMY">Bristol Myers Squibb (BMY)</option>
+                        <option value="MRK">Merck & Co. Inc. (MRK)</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Earnings Display Container -->
+            <div class="table-container">
+                <div id="earningsDisplay">
+                    <div style="text-align: center; padding: 60px 20px; color: #a0aec0;">
+                        <p style="font-size: 1.2rem;">📄 Select a company above to view their latest earnings call transcript</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -634,6 +880,212 @@
             fetchStockData();
         });
 
+        // ===== TAB SWITCHING =====
+        /**
+         * Switches between Stock Prices and Earnings Transcripts tabs
+         * @param {string} tabName - Name of the tab to switch to ('stocks' or 'earnings')
+         */
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Show selected tab content
+            if (tabName === 'stocks') {
+                document.getElementById('stocksContent').classList.add('active');
+                document.getElementById('stocksTab').classList.add('active');
+            } else if (tabName === 'earnings') {
+                document.getElementById('earningsContent').classList.add('active');
+                document.getElementById('earningsTab').classList.add('active');
+            }
+        }
+
+        // ===== EARNINGS TRANSCRIPT FETCHING =====
+        /**
+         * Fetches earnings call transcript for the selected company
+         */
+        async function fetchEarningsTranscript() {
+            const select = document.getElementById('companySelect');
+            const ticker = select.value;
+            const earningsDisplay = document.getElementById('earningsDisplay');
+
+            if (!ticker) {
+                earningsDisplay.innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px; color: #a0aec0;">
+                        <p style="font-size: 1.2rem;">📄 Select a company above to view their latest earnings call transcript</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Show loading state
+            earningsDisplay.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Fetching earnings transcript for ${ticker}...</p>
+                </div>
+            `;
+
+            try {
+                // Fetch transcript from API
+                const response = await fetch(`/api/earnings?ticker=${ticker}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (!result.success || !result.data) {
+                    throw new Error('Invalid data format received from API');
+                }
+
+                // Render the transcript
+                renderEarningsTranscript(result.data, ticker);
+
+            } catch (error) {
+                console.error('Error fetching earnings transcript:', error);
+
+                // Show error state
+                earningsDisplay.innerHTML = `
+                    <div class="error">
+                        <div class="error-icon">⚠️</div>
+                        <h2 class="error-title">Unable to Load Transcript</h2>
+                        <p class="error-message">
+                            No earnings transcript found for ${ticker} or an error occurred.
+                            <br><small>Error: ${error.message}</small>
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // ===== EARNINGS TRANSCRIPT RENDERING =====
+        /**
+         * Renders earnings call transcript in a readable format
+         * @param {Object} data - Earnings transcript data
+         * @param {string} ticker - Stock ticker symbol
+         */
+        function renderEarningsTranscript(data, ticker) {
+            const earningsDisplay = document.getElementById('earningsDisplay');
+
+            // Format date
+            const date = data.date ? new Date(data.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : 'N/A';
+
+            // Build transcript HTML
+            let transcriptHTML = `
+                <div class="transcript-container">
+                    <div class="transcript-header">
+                        <h2 style="color: #667eea; margin-bottom: 15px;">
+                            ${ticker} Earnings Call Transcript
+                        </h2>
+                        <div class="transcript-meta">
+                            <div class="meta-item">
+                                <div class="meta-label">Date</div>
+                                <div class="meta-value">${date}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Quarter</div>
+                                <div class="meta-value">Q${data.quarter || 'N/A'} ${data.year || 'N/A'}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Timing</div>
+                                <div class="meta-value">${data.earnings_timing ? data.earnings_timing.replace('_', ' ').toUpperCase() : 'N/A'}</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Ticker</div>
+                                <div class="meta-value">${data.ticker || ticker}</div>
+                            </div>
+                        </div>
+                    </div>
+            `;
+
+            // Display participants if available
+            if (data.participants && Array.isArray(data.participants) && data.participants.length > 0) {
+                transcriptHTML += `
+                    <h3 style="color: #ffffff; margin-bottom: 15px; font-size: 1.2rem;">
+                        Call Participants
+                    </h3>
+                    <div class="participants-list">
+                `;
+
+                data.participants.forEach(participant => {
+                    if (typeof participant === 'object' && participant.name) {
+                        transcriptHTML += `
+                            <div class="participant-card">
+                                <div class="participant-name">${participant.name}</div>
+                                <div class="participant-role">${participant.role || ''}</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                transcriptHTML += `</div>`;
+            }
+
+            // Display transcript split by speaker if available
+            if (data.transcript_split && Array.isArray(data.transcript_split) && data.transcript_split.length > 0) {
+                transcriptHTML += `
+                    <h3 style="color: #ffffff; margin: 30px 0 20px 0; font-size: 1.2rem;">
+                        Transcript
+                    </h3>
+                `;
+
+                // Limit to first 10 speakers for performance
+                const speakersToShow = data.transcript_split.slice(0, 15);
+
+                speakersToShow.forEach(segment => {
+                    transcriptHTML += `
+                        <div class="speaker-section">
+                            <div class="speaker-info">
+                                <span class="speaker-name">${segment.speaker || 'Unknown Speaker'}</span>
+                                ${segment.role ? `<span class="speaker-role">— ${segment.role}</span>` : ''}
+                            </div>
+                            <div class="speaker-text">${segment.text || ''}</div>
+                        </div>
+                    `;
+                });
+
+                if (data.transcript_split.length > 15) {
+                    transcriptHTML += `
+                        <div style="text-align: center; padding: 20px; color: #a0aec0; font-style: italic;">
+                            Showing first 15 speakers. Full transcript available via API.
+                        </div>
+                    `;
+                }
+            }
+            // Fallback to full transcript text if split not available
+            else if (data.transcript) {
+                transcriptHTML += `
+                    <h3 style="color: #ffffff; margin: 30px 0 20px 0; font-size: 1.2rem;">
+                        Full Transcript
+                    </h3>
+                    <div class="transcript-text">
+                        ${data.transcript.substring(0, 5000)}...
+                        ${data.transcript.length > 5000 ? '<div style="margin-top: 15px; font-style: italic; color: #a0aec0;">(Truncated for display. Full transcript available via API.)</div>' : ''}
+                    </div>
+                `;
+            } else {
+                transcriptHTML += `
+                    <div style="padding: 30px; text-align: center; color: #a0aec0;">
+                        No transcript text available for this earnings call.
+                    </div>
+                `;
+            }
+
+            transcriptHTML += `</div>`;
+
+            earningsDisplay.innerHTML = transcriptHTML;
+        }
+
         // ===== KEYBOARD SHORTCUTS =====
         /**
          * Add keyboard shortcuts for better accessibility
@@ -648,6 +1100,16 @@
             if ((event.ctrlKey || event.metaKey) && event.key === 'e') {
                 event.preventDefault();
                 exportToCSV();
+            }
+            // Ctrl/Cmd + 1: Switch to Stocks tab
+            if ((event.ctrlKey || event.metaKey) && event.key === '1') {
+                event.preventDefault();
+                switchTab('stocks');
+            }
+            // Ctrl/Cmd + 2: Switch to Earnings tab
+            if ((event.ctrlKey || event.metaKey) && event.key === '2') {
+                event.preventDefault();
+                switchTab('earnings');
             }
         });
     </script>

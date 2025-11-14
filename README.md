@@ -29,8 +29,11 @@ This dashboard helps business professionals quickly assess competitive positioni
 ### Dashboard Features
 - **Multi-Industry Tracking**: Monitor Technology and Pharmaceutical sectors simultaneously
 - **Real-time Stock Data**: Live stock prices from API Ninjas for 10+ companies
+- **Earnings Call Transcripts**: View latest earnings call transcripts for any tracked company
+- **Tabbed Interface**: Easy navigation between Stock Prices and Earnings Transcripts
 - **Industry Segmentation**: Data organized in separate, clearly labeled sections
 - **Visual Highlighting**: Highest prices in green, lowest in red (per industry)
+- **Transcript Display**: Formatted transcripts with speaker identification and metadata
 - **Responsive Design**: Works seamlessly on mobile and desktop
 - **Data Export**: Download comprehensive CSV with all industries for reports
 - **Auto-refresh**: Manual refresh with loading indicators
@@ -97,9 +100,11 @@ vercel --prod
 ```
 mgis-business-intelligence-dashboard/
 ├── api/
-│   └── stocks.js           # Serverless function for API calls
-├── index.html              # Main dashboard interface
+│   ├── stocks.js           # Serverless function for stock price API calls
+│   └── earnings.js         # Serverless function for earnings transcript API calls
+├── index.html              # Main dashboard interface with tabbed navigation
 ├── vercel.json             # Vercel deployment configuration
+├── .gitignore              # Git ignore file
 └── README.md               # This file
 ```
 
@@ -174,9 +179,11 @@ All styles are contained in `index.html`. Key customization points:
 - Reduced motion support for accessibility preferences
 
 ### Keyboard Shortcuts
-- `Ctrl/Cmd + R`: Refresh data
+- `Ctrl/Cmd + R`: Refresh stock data
 - `Ctrl/Cmd + E`: Export to CSV
-- `Tab`: Navigate between buttons
+- `Ctrl/Cmd + 1`: Switch to Stock Prices tab
+- `Ctrl/Cmd + 2`: Switch to Earnings Transcripts tab
+- `Tab`: Navigate between buttons and form elements
 
 ## 📊 Data Export
 
@@ -185,6 +192,31 @@ The "Export to CSV" feature allows you to:
 - Include timestamps for each data point
 - Use data in Excel, Google Sheets, or presentations
 - Maintain historical records of stock prices
+
+## 📄 Earnings Call Transcripts
+
+The Earnings Transcripts tab provides access to the latest earnings call transcripts for all tracked companies:
+
+### Features
+- **Company Selection**: Choose any company from a dropdown menu organized by industry
+- **Detailed Metadata**: View call date, quarter, year, and timing (before/after market)
+- **Participant List**: See all call participants with their roles
+- **Formatted Transcript**: Read speaker-by-speaker breakdown with clear formatting
+- **Easy Navigation**: Switch between stock prices and transcripts with one click
+
+### Usage
+1. Click the "📄 Earnings Transcripts" tab at the top of the dashboard
+2. Select a company from the dropdown menu
+3. The transcript will load automatically with:
+   - Call metadata (date, quarter, timing)
+   - List of participants
+   - Speaker-by-speaker transcript segments
+4. Scroll through the transcript to read executive commentary and Q&A
+
+### API Endpoint
+The earnings data is fetched from: `/api/earnings?ticker=TICKER`
+
+This serverless function queries the API Ninjas Earnings Transcript endpoint to retrieve the most recent earnings call data for the specified company.
 
 ## 🐛 Troubleshooting
 
@@ -220,14 +252,18 @@ To optimize API usage:
 
 Potential improvements for this dashboard:
 
-- [ ] Historical price charts
-- [ ] Percentage change calculations
-- [ ] Market cap and volume data
-- [ ] Custom company selection
-- [ ] Email alerts for price changes
+- [x] Earnings call transcripts with detailed speaker breakdowns
+- [ ] Historical price charts with interactive graphs
+- [ ] Percentage change calculations and trend analysis
+- [ ] Market cap and volume data integration
+- [ ] Custom company selection and watchlists
+- [ ] Email alerts for price changes and earnings announcements
+- [ ] Transcript search and filtering by speaker
 - [ ] Multi-currency support
 - [ ] Dark/light theme toggle
 - [ ] Real-time WebSocket updates
+- [ ] Sentiment analysis of earnings transcripts
+- [ ] Export transcripts to PDF
 
 ## 📝 License
 
@@ -252,18 +288,22 @@ For issues or questions:
 
 This project was created as part of a Management Information Systems (MGIS) business intelligence course to demonstrate:
 - Real-time data integration across multiple industries
-- Professional dashboard design with industry segmentation
+- Professional dashboard design with industry segmentation and tabbed navigation
 - Serverless architecture and scalability
 - Business intelligence reporting and competitive analysis
 - Data visualization best practices
 - Multi-sector comparative analysis capabilities
+- Qualitative analysis through earnings call transcripts
 
 ### Educational Value
 This dashboard showcases:
 - **Cross-Industry Analysis**: Compare different market sectors side-by-side
-- **Scalable Architecture**: Easily add new industries and companies
+- **Quantitative & Qualitative Data**: Stock prices alongside executive commentary from earnings calls
+- **Scalable Architecture**: Easily add new industries, companies, and data sources
 - **Professional Presentation**: Business-ready output suitable for executive briefings
 - **Data Export**: CSV generation for further analysis in Excel or BI tools
+- **Information Architecture**: Intuitive tabbed interface for different data types
+- **API Integration**: Multiple API endpoints for different data sources
 
 ---
 
