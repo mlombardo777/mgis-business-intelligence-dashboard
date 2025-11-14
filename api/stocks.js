@@ -1,23 +1,39 @@
 /**
- * Serverless Function: Stock Price Fetcher
+ * Serverless Function: Multi-Industry Stock Price Fetcher
  *
- * This function fetches real-time stock prices for major technology competitors
+ * This function fetches real-time stock prices for companies across multiple industries
  * from the API Ninjas Stock Price endpoint. It's designed for deployment on Vercel
  * and handles API authentication securely using environment variables.
  *
  * Endpoint: /api/stocks
  * Method: GET
- * Returns: JSON array of stock data with company info, prices, and timestamps
+ * Returns: JSON object with stock data organized by industry
  */
 
-// Configuration: Companies to track
-const COMPANIES = [
-  { ticker: 'AAPL', name: 'Apple Inc.' },
-  { ticker: 'MSFT', name: 'Microsoft Corporation' },
-  { ticker: 'GOOGL', name: 'Alphabet Inc. (Google)' },
-  { ticker: 'META', name: 'Meta Platforms Inc.' },
-  { ticker: 'AMZN', name: 'Amazon.com Inc.' }
-];
+// Configuration: Companies to track, organized by industry
+const INDUSTRIES = {
+  technology: {
+    name: 'Technology Sector',
+    companies: [
+      { ticker: 'AAPL', name: 'Apple Inc.' },
+      { ticker: 'MSFT', name: 'Microsoft Corporation' },
+      { ticker: 'GOOGL', name: 'Alphabet Inc. (Google)' },
+      { ticker: 'META', name: 'Meta Platforms Inc.' },
+      { ticker: 'AMZN', name: 'Amazon.com Inc.' }
+    ]
+  },
+  pharmaceutical: {
+    name: 'Pharmaceutical Sector',
+    companies: [
+      { ticker: 'PFE', name: 'Pfizer Inc.' },
+      { ticker: 'JNJ', name: 'Johnson & Johnson' },
+      { ticker: 'NVS', name: 'Novartis AG' },
+      { ticker: 'BMY', name: 'Bristol Myers Squibb Co.' },
+      { ticker: 'MRK', name: 'Merck & Co. Inc.' }
+      // Note: Daiichi Sankyo is available as DSNKY (OTC) if you want to swap it in
+    ]
+  }
+};
 
 /**
  * Fetches stock price for a single ticker from API Ninjas
@@ -83,51 +99,70 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Fetch stock prices for all companies in parallel for better performance
-    const stockPromises = COMPANIES.map(async (company) => {
-      try {
-        const priceData = await fetchStockPrice(company.ticker, apiKey);
+    // Process all industries and their companies
+    const industryResults = {};
+    let totalSuccessful = 0;
+    let totalCompanies = 0;
 
-        return {
-          ticker: company.ticker,
-          name: company.name,
-          price: priceData.price,
-          timestamp: new Date().toISOString(),
-          success: true
-        };
-      } catch (error) {
-        // Return error info for individual stock failures
-        return {
-          ticker: company.ticker,
-          name: company.name,
-          price: null,
-          timestamp: new Date().toISOString(),
-          success: false,
-          error: error.message
-        };
-      }
-    });
+    // Process each industry
+    for (const [industryKey, industryData] of Object.entries(INDUSTRIES)) {
+      // Fetch stock prices for all companies in this industry in parallel
+      const stockPromises = industryData.companies.map(async (company) => {
+        try {
+          const priceData = await fetchStockPrice(company.ticker, apiKey);
 
-    // Wait for all requests to complete
-    const results = await Promise.all(stockPromises);
+          return {
+            ticker: company.ticker,
+            name: company.name,
+            price: priceData.price,
+            timestamp: new Date().toISOString(),
+            success: true
+          };
+        } catch (error) {
+          // Return error info for individual stock failures
+          return {
+            ticker: company.ticker,
+            name: company.name,
+            price: null,
+            timestamp: new Date().toISOString(),
+            success: false,
+            error: error.message
+          };
+        }
+      });
+
+      // Wait for all requests in this industry to complete
+      const results = await Promise.all(stockPromises);
+      const successfulResults = results.filter(r => r.success);
+
+      totalCompanies += results.length;
+      totalSuccessful += successfulResults.length;
+
+      // Store results organized by industry
+      industryResults[industryKey] = {
+        name: industryData.name,
+        data: results,
+        count: results.length,
+        successCount: successfulResults.length
+      };
+    }
 
     // Check if all requests failed
-    const successfulResults = results.filter(r => r.success);
-    if (successfulResults.length === 0) {
+    if (totalSuccessful === 0) {
       return res.status(503).json({
         error: 'Service unavailable',
         message: 'Unable to fetch stock data from provider',
-        details: results
+        industries: industryResults
       });
     }
 
-    // Return successful results with metadata
+    // Return successful results organized by industry with metadata
     return res.status(200).json({
       success: true,
-      data: results,
+      industries: industryResults,
       timestamp: new Date().toISOString(),
-      count: results.length,
-      successCount: successfulResults.length
+      totalCompanies: totalCompanies,
+      totalSuccessful: totalSuccessful
     });
 
   } catch (error) {
